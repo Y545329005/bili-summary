@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}投资研究知识库 — 列表{% endblock %}
+{% block content %}
+
+<!-- Stats bar -->
+<div style="display:flex;gap:2rem;margin-bottom:2rem;padding:1rem;background:var(--pico-secondary-background);border-radius:8px">
+  <div><strong>{{ stats.total }}</strong> <small>篇总结</small></div>
+  <div><strong>{{ stats.owners }}</strong> <small>位UP主</small></div>
+  <div><strong>{{ stats.recent_7d }}</strong> <small>本周新增</small></div>
+  {% if stats.rating_distribution %}
+  <div>
+    {% for r, c in stats.rating_distribution.items() %}
+    <span class="rating-{{ r }}" style="padding:0.1rem 0.5rem;border-radius:4px;margin-right:0.3rem">{{ r }}: {{ c }}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+<!-- Search & filter -->
+<form method="get" style="display:flex;gap:0.5rem;margin-bottom:1.5rem">
+  <input type="search" name="search" placeholder="全文搜索…" value="{{ search }}"
+         style="flex:2" hx-get="/" hx-trigger="keyup changed delay:300ms"
+         hx-select="#summary-list" hx-target="#summary-list" hx-swap="outerHTML">
+  <select name="rating" style="flex:0.5" hx-get="/" hx-trigger="change"
+          hx-select="#summary-list" hx-target="#summary-list" hx-swap="outerHTML">
+    <option value="">全部评级</option>
+    <option value="A" {% if rating=="A" %}selected{% endif %}>A — 长期跟踪</option>
+    <option value="B" {% if rating=="B" %}selected{% endif %}>B — 阶段跟踪</option>
+    <option value="C" {% if rating=="C" %}selected{% endif %}>C — 仅供参考</option>
+    <option value="D" {% if rating=="D" %}selected{% endif %}>D — 事件噪音</option>
+  </select>
+</form>
+
+<!-- Summary list -->
+<div id="summary-list">
+{% if records %}
+  <p><small>共 {{ total }} 条</small></p>
+  {% for r in records %}
+  <article class="card" style="padding:1rem">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div style="flex:1">
+        <h3 style="margin:0 0 0.3rem 0">
+          <a href="/summary/{{ r.id }}" style="text-decoration:none">{{ r.title }}</a>
+        </h3>
+        <small style="color:var(--pico-muted-color)">
+          UP主: {{ r.owner }} · {{ r.duration }} · {{ r.char_count }} 字 · {{ r.created_at[:10] }}
+        </small>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        {% if r.research_rating %}
+        <span class="rating-{{ r.research_rating }}" style="padding:0.2rem 0.7rem;border-radius:4px;font-weight:bold">
+          {{ r.research_rating }}
+        </span>
+        {% endif %}
+        {% if r.investment_conclusion %}
+        <small style="display:block;margin-top:0.2rem">{{ r.investment_conclusion }}</small>
+        {% endif %}
+      </div>
+    </div>
+    {% if r.tags %}
+    <div style="margin-top:0.5rem">
+      {% for t in r.tags %}
+      <span class="tag-badge">{{ t }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </article>
+  {% endfor %}
+{% else %}
+  <div class="empty-state">
+    <h3>📭 知识库为空</h3>
+    <p>通过 CLI、浏览器扩展或 Raycast 总结视频后，内容会自动出现在这里。</p>
+    <p><code>bili-summary BV1xx411c7mD</code></p>
+  </div>
+{% endif %}
+</div>
+
+{% endblock %}

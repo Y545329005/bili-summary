@@ -1,0 +1,57 @@
+{
+  "name": "bili-summary",
+  "title": "Bili-Summary — B站视频深度总结",
+  "description": "粘贴 B 站 BV 号或链接，一键生成深度结构化总结（支持 Markdown 渲染）",
+  "icon": "icon.png",
+  "author": "yangqing",
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "summarize",
+      "title": "总结 B 站视频",
+      "subtitle": "粘贴 BV 号/链接，或自动读取剪贴板",
+      "description": "提取视频字幕并用 DeepSeek 生成结构化深度总结",
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "url",
+          "placeholder": "BV 号或 B 站链接（留空自动读取剪贴板）",
+          "type": "text",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "summarize-clipboard",
+      "title": "快速总结（剪贴板）",
+      "subtitle": "自动读取剪贴板中的 B 站链接并总结",
+      "description": "一键操作：复制链接 → 唤起 Raycast → 回车",
+      "mode": "view"
+    },
+    {
+      "name": "open-history",
+      "title": "打开历史总结",
+      "subtitle": "浏览近期生成的所有总结",
+      "description": "查看本地历史记录，支持搜索和回看",
+      "mode": "view"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.94.0",
+    "@raycast/utils": "^1.19.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^2.0.4",
+    "@types/node": "22.13.10",
+    "@types/react": "19.0.10",
+    "eslint": "^8.57.1",
+    "typescript": "^5.8.2"
+  },
+  "scripts": {
+    "build": "ray build -e dist -o dist",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "publish": "npx @raycast/api@latest publish"
+  }
+}

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}{{ record.title }} — 投资研究知识库{% endblock %}
+{% block content %}
+
+<nav style="margin-bottom:1.5rem">
+  <a href="/">← 返回列表</a>
+</nav>
+
+<article>
+  <header>
+    <hgroup>
+      <h1>{{ record.title }}</h1>
+      <p>
+        <strong>UP主:</strong> {{ record.owner }} ·
+        <strong>时长:</strong> {{ record.duration }} ·
+        <strong>BV号:</strong> <a href="https://www.bilibili.com/video/{{ record.bvid }}" target="_blank">{{ record.bvid }}</a> ·
+        <strong>字数:</strong> {{ record.char_count }} ·
+        <strong>创建:</strong> {{ record.created_at[:10] }}
+      </p>
+    </hgroup>
+
+    <!-- Meta badges -->
+    <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
+      {% if record.research_rating %}
+      <span class="rating-{{ record.research_rating }}" style="padding:0.3rem 0.9rem;border-radius:6px;font-weight:bold;font-size:1.2rem">
+        研究评级: {{ record.research_rating }}
+      </span>
+      {% endif %}
+      {% if record.investment_conclusion %}
+      <span style="padding:0.3rem 0.8rem;border:1px solid var(--pico-primary);border-radius:6px">
+        {{ record.investment_conclusion }}
+      </span>
+      {% endif %}
+      {% for t in record.tags %}
+      <span class="tag-badge" style="font-size:0.9rem">{{ t }}</span>
+      {% endfor %}
+      {% if record.feishu_doc_id %}
+      <span class="sync-status" title="已同步到飞书 {{ record.synced_at }}">📤 已同步</span>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- Edit panel -->
+  <details style="margin-bottom:1.5rem">
+    <summary>✏️ 编辑标签 / 笔记 / 评级</summary>
+    <form id="edit-form" style="margin-top:1rem"
+          hx-put="/api/summaries/{{ record.id }}"
+          hx-target="#edit-result" hx-swap="innerHTML">
+      <label>
+        标签（JSON 数组，如 ["AI","消费"]）
+        <input type="text" name="tags_str" value='{{ record.tags | tojson }}' style="font-family:monospace">
+      </label>
+      <label>
+        研究评级
+        <select name="research_rating">
+          <option value="" {% if not record.research_rating %}selected{% endif %}>未评级</option>
+          <option value="A" {% if record.research_rating=="A" %}selected{% endif %}>A — 值得长期跟踪</option>
+          <option value="B" {% if record.research_rating=="B" %}selected{% endif %}>B — 值得阶段跟踪</option>
+          <option value="C" {% if record.research_rating=="C" %}selected{% endif %}>C — 仅供参考</option>
+          <option value="D" {% if record.research_rating=="D" %}selected{% endif %}>D — 事件噪音</option>
+        </select>
+      </label>
+      <label>
+        投资结论
+        <select name="investment_conclusion">
+          <option value="" {% if not record.investment_conclusion %}selected{% endif %}>未标注</option>
+          <option value="忽略" {% if record.investment_conclusion=="忽略" %}selected{% endif %}>忽略</option>
+          <option value="观察" {% if record.investment_conclusion=="观察" %}selected{% endif %}>观察</option>
+          <option value="跟踪" {% if record.investment_conclusion=="跟踪" %}selected{% endif %}>跟踪</option>
+          <option value="重点研究" {% if record.investment_conclusion=="重点研究" %}selected{% endif %}>重点研究</option>
+        </select>
+      </label>
+      <label>
+        私人笔记
+        <textarea name="notes" rows="3" placeholder="记录你的思考…">{{ record.notes }}</textarea>
+      </label>
+      <button type="submit">保存</button>
+      <span id="edit-result" style="margin-left:1rem;color:green"></span>
+    </form>
+  </details>
+
+  <!-- Sync button -->
+  <div style="margin-bottom:1.5rem;display:flex;gap:0.5rem">
+    <button id="sync-btn" hx-post="/api/sync/feishu" hx-vals='{"id": {{ record.id }}}'
+            hx-target="#sync-result" hx-swap="innerHTML">
+      📤 同步到飞书
+    </button>
+    <span id="sync-result"></span>
+  </div>
+
+  <!-- Rendered markdown -->
+  <div class="markdown-body" id="markdown-content"></div>
+</article>
+
+<script>
+// Render markdown on page load
+const md = `{{ record.markdown_content | replace('`', '\\`') | replace('$', '\\$') }}`;
+document.getElementById('markdown-content').innerHTML = marked.parse(md);
+</script>
+
+{% endblock %}

@@ -1,0 +1,167 @@
+/* Bili 投资研究总结 — Content Script Styles (Shadow DOM) */
+
+.bili-summary-container {
+  all: initial;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #1d1d1f;
+}
+
+/* ---- Floating Trigger Button ---- */
+.bs-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+.bs-trigger-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.45);
+}
+.bs-trigger-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+.bs-trigger-btn .spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: bs-spin 0.7s linear infinite;
+}
+@keyframes bs-spin { to { transform: rotate(360deg); } }
+
+/* ---- Summary Panel ---- */
+.bs-panel {
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  width: 520px;
+  max-height: calc(100vh - 100px);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.bs-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  cursor: move;
+  user-select: none;
+}
+.bs-panel-header h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+.bs-panel-actions {
+  display: flex;
+  gap: 8px;
+}
+.bs-panel-actions button {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.bs-panel-actions button:hover {
+  background: rgba(255,255,255,0.35);
+}
+
+.bs-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 18px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* Markdown content in panel */
+.bs-panel-body h1 { font-size: 1.4em; margin: 0.6em 0 0.3em; }
+.bs-panel-body h2 {
+  font-size: 1.15em; margin: 1.2em 0 0.4em;
+  border-bottom: 2px solid #667eea; padding-bottom: 4px;
+}
+.bs-panel-body h3 { font-size: 1.05em; margin: 1em 0 0.3em; }
+.bs-panel-body p { margin: 0.4em 0; }
+.bs-panel-body table {
+  width: 100%; border-collapse: collapse; font-size: 0.82em;
+  margin: 0.5em 0 1em;
+}
+.bs-panel-body table th,
+.bs-panel-body table td {
+  border: 1px solid #e0e0e0; padding: 6px 10px; text-align: left;
+}
+.bs-panel-body table th { background: #f5f5f7; font-weight: 600; }
+.bs-panel-body blockquote {
+  border-left: 3px solid #667eea; margin: 0.5em 0;
+  padding: 6px 14px; background: #f8f8fa; color: #555;
+}
+.bs-panel-body code {
+  background: #f0f0f5; padding: 1px 5px; border-radius: 3px;
+  font-size: 0.9em;
+}
+.bs-panel-body pre {
+  background: #1d1d1f; color: #eee; padding: 12px 16px;
+  border-radius: 8px; overflow-x: auto; font-size: 0.82em;
+}
+.bs-panel-body strong { color: #333; }
+.bs-panel-body a { color: #667eea; }
+
+/* Error / empty states */
+.bs-error {
+  padding: 20px;
+  text-align: center;
+  color: #b71c1c;
+}
+.bs-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #888;
+}
+.bs-loading .spinner {
+  width: 32px; height: 32px;
+  border: 3px solid #e0e0e0;
+  border-top-color: #667eea;
+  border-radius: 50%;
+  animation: bs-spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+
+/* Scrollbar */
+.bs-panel-body::-webkit-scrollbar { width: 6px; }
+.bs-panel-body::-webkit-scrollbar-track { background: transparent; }
+.bs-panel-body::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}投资研究知识库{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    :root { --pico-font-size: 95%; }
+    .container { max-width: 960px; }
+    .card { margin-bottom: 1rem; }
+    .tag-badge {
+      display: inline-block; padding: 0.1rem 0.5rem; border-radius: 4px;
+      background: var(--pico-primary-background); color: var(--pico-primary-inverse);
+      font-size: 0.8rem; margin-right: 0.3rem;
+    }
+    .rating-A { background: #2e7d32; color: #fff; }
+    .rating-B { background: #1565c0; color: #fff; }
+    .rating-C { background: #f57f17; color: #fff; }
+    .rating-D { background: #b71c1c; color: #fff; }
+    .markdown-body { padding: 1rem 0; line-height: 1.8; }
+    .markdown-body h2 { border-bottom: 2px solid var(--pico-primary); padding-bottom: 0.3rem; margin-top: 2rem; }
+    .markdown-body h3 { margin-top: 1.5rem; }
+    .markdown-body table { font-size: 0.85rem; }
+    .markdown-body table th { white-space: nowrap; }
+    .markdown-body blockquote {
+      border-left: 3px solid var(--pico-primary);
+      padding: 0.5rem 1rem; background: var(--pico-secondary-background);
+    }
+    header nav { justify-content: space-between; }
+    .sync-status { font-size: 0.8rem; color: var(--pico-muted-color); }
+    .empty-state { text-align: center; padding: 4rem 2rem; color: var(--pico-muted-color); }
+    pre code { font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <header class="container">
+    <nav>
+      <ul>
+        <li><strong><a href="/" style="text-decoration:none">📚 投资研究知识库</a></strong></li>
+      </ul>
+      <ul>
+        <li><small><a href="/api/docs" target="_blank">API</a></small></li>
+      </ul>
+    </nav>
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="container" style="margin-top:3rem;text-align:center;font-size:0.8rem;color:var(--pico-muted-color)">
+    <p>bili-summary · 视频总结为 AI 生成，不构成投资建议</p>
+  </footer>
+</body>
+</html>

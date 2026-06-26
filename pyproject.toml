@@ -1,0 +1,26 @@
+[project]
+name = "bili-summary"
+version = "0.1.0"
+description = "哔哩哔哩长视频内容总结工具 - 自动提取字幕并用 DeepSeek 生成结构化总结"
+requires-python = ">=3.9"
+dependencies = [
+    "httpx>=0.27.0",
+    "openai>=1.30.0",
+    "playwright>=1.45.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-httpx>=0.30",
+]
+
+[project.scripts]
+bili-summary = "bili_summary.cli:main"
+
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

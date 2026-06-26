@@ -1,0 +1,33 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Project output
+output/*.md
+!output/.gitkeep
+
+# Node
+node_modules/
+dist/
+
+# Test
+.pytest_cache/
+
+# Environment
+.env
+.env.local

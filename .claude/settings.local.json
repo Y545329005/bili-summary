@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(keybindings-help)",
+      "Skill(update-config)",
+      "Bash(claude plugin *)",
+      "Read(//Users/yangqing/.claude/**)",
+      "WebSearch",
+      "Bash(npx --version)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(npx *)",
+      "Bash(pip show *)",
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "Bash(npm --version)",
+      "Bash(npm install *)",
+      "Bash(pbcopy)",
+      "Bash(bili-summary BV1qoUkYyEEd *)",
+      "Bash(bili-summary BV1aEUZBKEHJ *)",
+      "Bash(bili-summary BV1fuVZ6bEAD *)",
+      "Bash(bili-summary BV1XuJV6GEs3 *)",
+      "Bash(bili-summary BV1Eg9fBFEcT *)",
+      "WebFetch(domain:search.bilibili.com)",
+      "Bash(bili-summary BV1Dp7N6CEVd *)",
+      "Bash(pip3 list *)",
+      "Bash(git init *)",
+      "Bash(git add *)"
+    ]
+  }
+}
