@@ -31,3 +31,6 @@ dist/
 # Environment
 .env
 .env.local
+
+# Claude Code local settings (may contain personal paths/tokens)
+.claude/
