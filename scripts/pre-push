@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# Pre-push hook: privacy scan + changelog reminder
+# - Secrets found → BLOCK push (exit 1)
+# - Changelog missing → WARN only (non-blocking)
+
+set -e
+
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+# ── 1. Privacy scan ──
+echo -e "${YELLOW}🔍 扫描隐私信息...${NC}"
+
+PATTERNS=(
+    "sk-[a-zA-Z0-9]{20,}"
+    "sk-[a-zA-Z0-9-]{30,}"
+    "AKIA[0-9A-Z]{16}"
+)
+
+FOUND_SECRETS=()
+
+while IFS= read -r file; do
+    case "$file" in
+        *.png|*.jpg|*.ico|*.lock|*.jar|*.woff*|*.ttf|*.eot) continue ;;
+    esac
+
+    for pattern in "${PATTERNS[@]}"; do
+        matches=$(grep -nE "$pattern" "$file" 2>/dev/null || true)
+        if [[ -n "$matches" ]]; then
+            real_matches=$(echo "$matches" | grep -v "sk-xxx" | grep -v "sk-xxxxxxxx" || true)
+            if [[ -n "$real_matches" ]]; then
+                FOUND_SECRETS+=("$file: $real_matches")
+            fi
+        fi
+    done
+done < <(git ls-files)
+
+if [[ ${#FOUND_SECRETS[@]} -gt 0 ]]; then
+    echo -e "${RED}⛔ 发现疑似密钥，推送已阻止！${NC}"
+    echo "────────────────────────────────────────────"
+    for entry in "${FOUND_SECRETS[@]}"; do
+        echo -e "${RED}$entry${NC}"
+    done
+    echo "────────────────────────────────────────────"
+    echo "请移除真实密钥，使用环境变量或占位符替代。"
+    echo "紧急情况可跳过: git push --no-verify"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ 隐私扫描通过${NC}"
+
+# ── 2. Changelog check (warning only, non-blocking) ──
+while read -r local_ref local_sha remote_ref remote_sha; do
+    if [[ "$local_sha" == "0000000000000000000000000000000000000000" ]]; then
+        continue
+    fi
+
+    if [[ "$remote_sha" != "0000000000000000000000000000000000000000" ]]; then
+        commit_range="${remote_sha}..${local_sha}"
+    else
+        commit_range="$local_sha"
+    fi
+
+    commit_count=$(git rev-list --count "$commit_range" 2>/dev/null || echo 0)
+
+    echo ""
+    echo "────────────────────────────────────────────"
+    echo -e "${YELLOW}📋 本次推送: $(echo "$local_ref" | sed 's|refs/heads/||') → $commit_count 个提交${NC}"
+    git log --oneline "$commit_range" 2>/dev/null
+    echo ""
+
+    # Check if any non-CHANGELOG files changed
+    changed_code=$(git diff --name-only "$commit_range" 2>/dev/null | grep -v "CHANGELOG.md" | grep -v "^$" || true)
+    changelog_touched=$(git diff --name-only "$commit_range" 2>/dev/null | grep "CHANGELOG.md" || true)
+
+    if [[ -n "$changed_code" ]] && [[ -z "$changelog_touched" ]]; then
+        echo -e "${YELLOW}⚠️  代码有变更但 CHANGELOG.md 未更新${NC}"
+        echo -e "${YELLOW}   建议补上后再推。本次不阻止推送。${NC}"
+    elif [[ -n "$changelog_touched" ]]; then
+        echo -e "${GREEN}✅ CHANGELOG.md 已更新${NC}"
+    fi
+done
+
+echo ""
+echo -e "${GREEN}✅ 检查完成${NC}"
